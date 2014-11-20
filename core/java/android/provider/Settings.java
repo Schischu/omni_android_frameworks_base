@@ -3113,6 +3113,12 @@ public final class Settings {
             outKeySet.addAll(MOVED_TO_GLOBAL);
         }
 
+        /** 
+         * The hostname for this device 
+         * @hide 
+         */ 
+        public static final String DEVICE_HOSTNAME = "device_hostname";
+
         /**
          * Look up a name in the database.
          * @param resolver to access the database with

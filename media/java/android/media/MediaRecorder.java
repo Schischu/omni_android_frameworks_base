@@ -232,7 +232,7 @@ public class MediaRecorder
          * This is a hidden audio source.
          * @hide
          */
-        protected static final int HOTWORD = 1999;
+        protected static final int HOTWORD = 1;
     }
 
     /**

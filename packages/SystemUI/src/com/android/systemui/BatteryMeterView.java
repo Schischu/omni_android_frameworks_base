@@ -42,7 +42,7 @@ public class BatteryMeterView extends View implements DemoMode,
 
     private static final boolean ENABLE_PERCENT = true;
     private static final boolean SINGLE_DIGIT_PERCENT = false;
-    private static final boolean SHOW_100_PERCENT = true;
+    private static final boolean SHOW_100_PERCENT = false;
 
     private static final int FULL = 96;
 
@@ -202,8 +202,8 @@ public class BatteryMeterView extends View implements DemoMode,
         levels.recycle();
         colors.recycle();
         atts.recycle();
-        mShowPercent = ENABLE_PERCENT; //&& 0 != Settings.System.getInt(
-                //context.getContentResolver(), "status_bar_show_battery_percent", 0);
+        mShowPercent = ENABLE_PERCENT && 0 != Settings.System.getInt(
+                context.getContentResolver(), "status_bar_show_battery_percent", 0);
         mWarningString = context.getString(R.string.battery_meter_very_low_overlay_symbol);
         mCriticalLevel = mContext.getResources().getInteger(
                 com.android.internal.R.integer.config_criticalBatteryWarningLevel);
@@ -397,10 +397,8 @@ public class BatteryMeterView extends View implements DemoMode,
         boolean pctOpaque = false;
         float pctX = 0, pctY = 0;
         String pctText = null;
-        //if (!tracker.plugged && level > mCriticalLevel && mShowPercent
-        //        && !(tracker.level == 100 && !SHOW_100_PERCENT)) {
-		if (!tracker.plugged)
-		{
+        if (!tracker.plugged && level > mCriticalLevel && mShowPercent
+                && !(tracker.level == 100 && !SHOW_100_PERCENT)) {
             mTextPaint.setColor(getColorForLevel(level));
             mTextPaint.setTextSize(height *
                     (SINGLE_DIGIT_PERCENT ? 0.75f

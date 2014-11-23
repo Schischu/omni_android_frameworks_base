@@ -109,6 +109,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.util.TypedValue;
 
 import com.android.internal.statusbar.StatusBarIcon;
 import com.android.keyguard.KeyguardHostView.OnDismissAction;
@@ -262,6 +263,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private UnlockMethodCache mUnlockMethodCache;
     private DozeServiceHost mDozeServiceHost;
     private boolean mScreenOnComingFromTouch;
+    private TextView mBatteryLevel;
 
     int mPixelFormat;
     Object mQueueLock = new Object();
@@ -612,7 +614,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         final Context context = mContext;
 
         Resources res = context.getResources();
-
         updateDisplaySize(); // populates mDisplayMetrics
         updateResources();
 
@@ -642,7 +643,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mNotificationPanel = (NotificationPanelView) mStatusBarWindow.findViewById(
                 R.id.notification_panel);
         mNotificationPanel.setStatusBar(this);
-
+		mBatteryLevel = (TextView)mStatusBarWindow.findViewById(R.id.battery_level);
+		mBatteryLevel.setVisibility(View.VISIBLE);
         if (!ActivityManager.isHighEndGfx()) {
             mStatusBarWindow.setBackground(null);
             mNotificationPanel.setBackground(new FastColorDrawable(context.getResources().getColor(
@@ -786,7 +788,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
             @Override
             public void onBatteryLevelChanged(int level, boolean pluggedIn, boolean charging) {
-                // noop
+				mBatteryLevel.setText(level+"%");
             }
         });
         mNetworkController = new NetworkControllerImpl(mContext);
@@ -3126,7 +3128,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     @Override
     protected void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig); // calls refreshLayout
-
+        mBatteryLevel.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                R.dimen.battery_level_text_size);
         if (DEBUG) {
             Log.v(TAG, "configuration changed: " + mContext.getResources().getConfiguration());
         }

@@ -399,6 +399,8 @@ public class BatteryMeterView extends View implements DemoMode,
         String pctText = null;
         //if (!tracker.plugged && level > mCriticalLevel && mShowPercent
         //        && !(tracker.level == 100 && !SHOW_100_PERCENT)) {
+		if (!tracker.plugged)
+		{
             mTextPaint.setColor(getColorForLevel(level));
             mTextPaint.setTextSize(height *
                     (SINGLE_DIGIT_PERCENT ? 0.75f
@@ -414,7 +416,7 @@ public class BatteryMeterView extends View implements DemoMode,
                 // cut the percentage text out of the overall shape
                 mShapePath.op(mTextPath, Path.Op.DIFFERENCE);
             }
-       // }
+        }
 
         // draw the battery shape background
         c.drawPath(mShapePath, mFramePaint);

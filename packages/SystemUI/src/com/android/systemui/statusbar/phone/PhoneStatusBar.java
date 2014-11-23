@@ -644,7 +644,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 R.id.notification_panel);
         mNotificationPanel.setStatusBar(this);
 		mBatteryLevel = (TextView)mStatusBarWindow.findViewById(R.id.battery_level);
-		mBatteryLevel.setVisibility(View.VISIBLE);
         if (!ActivityManager.isHighEndGfx()) {
             mStatusBarWindow.setBackground(null);
             mNotificationPanel.setBackground(new FastColorDrawable(context.getResources().getColor(
@@ -3128,8 +3127,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     @Override
     protected void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig); // calls refreshLayout
-        mBatteryLevel.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                R.dimen.battery_level_text_size);
         if (DEBUG) {
             Log.v(TAG, "configuration changed: " + mContext.getResources().getConfiguration());
         }

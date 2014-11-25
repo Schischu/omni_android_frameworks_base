@@ -786,8 +786,21 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 }
             }
             @Override
-            public void onBatteryLevelChanged(int level, boolean pluggedIn, boolean charging) {
+            public void onBatteryLevelChanged(int level, boolean pluggedIn, boolean charging) 
+			{
 				mBatteryLevel.setText(level+"%");
+				if(level > 50)
+				{
+					mBatteryLevel.setTextColor(0xFF00FF00);
+				}
+				else if (level > 14)
+				{
+					mBatteryLevel.setTextColor(0xFFFFFF00);
+				}
+				else
+				{
+					mBatteryLevel.setTextColor(0xFFFF0000);
+				}
             }
         });
         mNetworkController = new NetworkControllerImpl(mContext);

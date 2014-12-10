@@ -2640,6 +2640,18 @@ public final class Settings {
         public static final String EGG_MODE = "egg_mode";
 
         /**
+         * Whether volume button press shuld be treated as wake key
+         * @hide
+         */
+        public static final String VOLUME_BUTTON_WAKE = "volume_button_wake";
+
+        /**
+         * Whether home button press shuld be treated as wake key
+         * @hide
+         */
+        public static final String HOME_BUTTON_WAKE = "home_button_wake";
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
@@ -5266,6 +5278,12 @@ public final class Settings {
          * Whether ADB is enabled.
          */
         public static final String ADB_ENABLED = "adb_enabled";
+
+        /**
+         * Whether to display the ADB notification.
+         * @hide
+         */
+        public static final String ADB_NOTIFY = "adb_notify";
 
         /**
          * Whether Views are allowed to save their attribute data.

@@ -70,7 +70,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // database gets upgraded properly. At a minimum, please confirm that 'upgradeVersion'
     // is properly propagated through your change.  Not doing so will result in a loss of user
     // settings.
-    private static final int DATABASE_VERSION = 113;
+
+    private static final int DATABASE_VERSION = 118;
+
 
     private Context mContext;
     private int mUserHandle;
@@ -1825,6 +1827,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 if (stmt != null) stmt.close();
             }
             upgradeVersion = 113;
+        }
+
+
+        if (upgradeVersion < 118) {
+            String[] qsTiles = new String[] {
+                    Settings.Secure.QS_TILES,
+                    Settings.Secure.QS_USE_MAIN_TILES
+            };
+
+            moveSettingsToNewTable(db, TABLE_SYSTEM, TABLE_SECURE,
+                    qsTiles, true);
+            upgradeVersion = 118;
         }
 
         // *** Remember to update DATABASE_VERSION above!

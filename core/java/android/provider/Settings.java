@@ -2653,6 +2653,9 @@ public final class Settings {
          */
         public static final String EGG_MODE = "egg_mode";
 
+		//Cyano-port long press volume buttons
+		public static final String VOLBTN_MUSIC_CONTROLS = "button_volume_music_control";
+
         /**
          * Whether volume button press shuld be treated as wake key
          * @hide

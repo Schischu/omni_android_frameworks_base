@@ -768,6 +768,12 @@ public abstract class Window {
         setPrivateFlags(flags, flags);
     }
 
+    /** @hide */
+	public void clearPrivateFlags(int flags) 
+	{
+		setPrivateFlags(0, flags);
+	}
+
     /**
      * Convenience function to clear the flag bits as specified in flags, as
      * per {@link #setFlags}.

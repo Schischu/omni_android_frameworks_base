@@ -41,6 +41,8 @@ import com.android.systemui.qs.tiles.RotationLockTile;
 import com.android.systemui.qs.tiles.WifiTile;
 import com.android.systemui.qs.tiles.AdbOverNetworkTile;
 import com.android.systemui.settings.CurrentUserTracker;
+import android.nfc.NfcAdapter;
+import com.android.systemui.qs.tiles.NfcTile;
 import com.android.systemui.statusbar.policy.BluetoothController;
 import com.android.systemui.statusbar.policy.CastController;
 import com.android.systemui.statusbar.policy.FlashlightController;
@@ -245,6 +247,7 @@ public class QSTileHost implements QSTile.Host {
         else if (tileSpec.equals("cast")) return new CastTile(this);
         else if (tileSpec.equals("hotspot")) return new HotspotTile(this);
         else if (tileSpec.equals("adb_network")) return new AdbOverNetworkTile(this);
+        else if (tileSpec.equals("nfc")) return new NfcTile(this);
         else if (tileSpec.startsWith(IntentTile.PREFIX)) return IntentTile.create(this,tileSpec);
         else throw new IllegalArgumentException("Bad tile spec: " + tileSpec);
     }

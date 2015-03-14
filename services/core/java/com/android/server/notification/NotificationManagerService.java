@@ -232,6 +232,7 @@ public class NotificationManagerService extends SystemService {
 
     // The last key in this list owns the hardware.
     ArrayList<String> mLights = new ArrayList<>();
+	NotificationRecord mLedNotification;
 
     private AppOpsManager mAppOps;
 

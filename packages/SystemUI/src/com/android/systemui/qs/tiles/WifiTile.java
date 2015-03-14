@@ -326,7 +326,7 @@ public class WifiTile extends QSTile<QSTile.SignalState> {
                     final AccessPoint ap = mAccessPoints[i];
                     final Item item = new Item();
                     item.tag = ap;
-                    item.icon = ap.overlayIconId;
+                    item.icon = ap.iconId;
                     item.line1 = ap.ssid;
                     if (ap.isConnected) {
                         item.line2 = mContext.getString(ap.isConfigured ?

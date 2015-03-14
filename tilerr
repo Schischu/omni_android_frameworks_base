@@ -1,0 +1,36 @@
+frameworks/base/packages/SystemUI/src/com/android/systemui/qs/tiles/AdbOverNetworkTile.java:62: error: incompatible types
+        state.icon = R.drawable.ic_qs_flashlight_on;
+                               ^
+  required: Icon
+  found:    int
+frameworks/base/packages/SystemUI/src/com/android/systemui/qs/tiles/AdbOverNetworkTile.java:75: error: incompatible types
+            state.icon = R.drawable.ic_qs_network_adb_on;
+                                   ^
+  required: Icon
+  found:    int
+frameworks/base/packages/SystemUI/src/com/android/systemui/qs/tiles/AdbOverNetworkTile.java:79: error: incompatible types
+            state.icon = R.drawable.ic_qs_network_adb_off;
+                                   ^
+  required: Icon
+  found:    int
+frameworks/base/packages/SystemUI/src/com/android/systemui/qs/tiles/CompassTile.java:100: error: cannot find symbol
+            state.iconId = R.drawable.ic_qs_compass_on;
+                 ^
+  symbol:   variable iconId
+  location: variable state of type BooleanState
+frameworks/base/packages/SystemUI/src/com/android/systemui/qs/tiles/CompassTile.java:115: error: cannot find symbol
+            state.iconId = R.drawable.ic_qs_compass_off;
+                 ^
+  symbol:   variable iconId
+  location: variable state of type BooleanState
+frameworks/base/packages/SystemUI/src/com/android/systemui/qs/tiles/NfcTile.java:97: error: cannot find symbol
+        state.iconId = state.value ? R.drawable.ic_qs_nfc_on : R.drawable.ic_qs_nfc_off;
+             ^
+  symbol:   variable iconId
+  location: variable state of type BooleanState
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+6 errors
+

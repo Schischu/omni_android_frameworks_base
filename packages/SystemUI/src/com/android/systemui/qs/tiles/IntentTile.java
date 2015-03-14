@@ -119,13 +119,13 @@ public class IntentTile extends QSTile<QSTile.State> {
                 Log.w(TAG, "Error loading icon bitmap, length " + iconBitmap.length, t);
             }
         } else {
-            final int iconId = intent.getIntExtra("iconId", 0);
-            if (iconId != 0) {
+            final int overlayIconId = intent.getIntExtra("overlayIconId", 0);
+            if (overlayIconId != 0) {
                 final String iconPackage = intent.getStringExtra("iconPackage");
                 if (!TextUtils.isEmpty(iconPackage)) {
-                    state.icon = new PackageDrawableIcon(iconPackage, iconId);
+                    state.icon = new PackageDrawableIcon(iconPackage, overlayIconId);
                 } else {
-                    state.icon = ResourceIcon.get(iconId);
+                    state.icon = ResourceIcon.get(overlayIconId);
                 }
             }
         }

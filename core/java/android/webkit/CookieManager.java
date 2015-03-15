@@ -229,7 +229,17 @@ public abstract class CookieManager {
      * written to persistent storage.
      * This call will block the caller until it is done and may perform I/O.
      */
-    public abstract void flush();
+    public void flush() {
+        flushCookieStore();
+    }
+
+    /**
+     * Flushes all cookies managed by the Chrome HTTP stack to flash.
+     *
+     * @hide Package level api, called from CookieSyncManager
+     */
+    protected void flushCookieStore() {
+    }
 
     /**
      * Gets whether the application's {@link WebView} instances send and accept

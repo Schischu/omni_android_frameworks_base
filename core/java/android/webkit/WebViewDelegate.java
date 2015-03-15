@@ -107,7 +107,7 @@ public final class WebViewDelegate {
             throw new IllegalArgumentException(canvas.getClass().getName()
                     + " is not hardware accelerated");
         }
-        ((HardwareCanvas) canvas).callDrawGLFunction2(nativeDrawGLFunctor);
+        ((HardwareCanvas) canvas).callDrawGLFunction(nativeDrawGLFunctor);
     }
 
     /**

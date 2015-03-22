@@ -2547,7 +2547,6 @@ public final class Settings {
         public static final String NOTIFICATION_LIGHT_PULSE = "notification_light_pulse";
 
         /**
-<<<<<<< HEAD
          * What color to use for the notification LED by default
          * @hide
          */
@@ -2624,8 +2623,6 @@ public final class Settings {
                 "notification_light_pulse_custom_values";
 
         /**
-=======
->>>>>>> upstream/android-5.1
          * Whether the battery light should be enabled (if hardware supports it)
          * The value is boolean (1 or 0).
          * @hide
@@ -2658,15 +2655,6 @@ public final class Settings {
         public static final String BATTERY_LIGHT_FULL_COLOR = "battery_light_full_color";
 
         /**
-<<<<<<< HEAD
-=======
-         * What color to use for the battery LED while charging - really full (100%)
-         * @hide
-         */
-        public static final String BATTERY_LIGHT_REALLY_FULL_COLOR = "battery_light_really_full_color";
-
-        /**
->>>>>>> upstream/android-5.1
          * Show pointer location on screen?
          * 0 = no
          * 1 = yes

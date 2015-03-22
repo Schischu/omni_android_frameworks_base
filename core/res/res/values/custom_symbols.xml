@@ -53,13 +53,7 @@
   <java-symbol type="anim" name="last_app_in" />
   <java-symbol type="anim" name="last_app_out" />
 
-<<<<<<< HEAD
   <!-- First boot install dialog -->
   <java-symbol type="string" name="android_installing_apk" />
   <java-symbol type="string" name="android_upgrading_installing_title" />
-=======
-  <!--OmniGears Battery lights -->
-  <java-symbol type="bool" name="config_multiColorBatteryLed" />
-  <java-symbol type="bool" name="config_intrusiveBatteryLed" />
->>>>>>> upstream/android-5.1
 </resources>

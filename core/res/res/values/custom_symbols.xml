@@ -38,6 +38,7 @@
   <java-symbol type="integer" name="config_backKillTimeout" />
   <java-symbol type="string" name="app_killed_message" />
   <java-symbol type="bool" name="config_hasRemovableLid" />
+  <java-symbol type="bool" name="config_persistHomeWakeSupport" />
 
   <!-- power profiles -->
   <java-symbol type="bool" name="config_powerProfilesSupported" />
@@ -53,7 +54,12 @@
   <java-symbol type="anim" name="last_app_in" />
   <java-symbol type="anim" name="last_app_out" />
 
-  <!-- First boot install dialog -->
   <java-symbol type="string" name="android_installing_apk" />
   <java-symbol type="string" name="android_upgrading_installing_title" />
+
+  <!-- global actions -->
+  <java-symbol type="id" name="option4" />
+  <java-symbol type="id" name="option5" />
+  <java-symbol type="style" name="GlobalActionsAnimation" />
+
 </resources>

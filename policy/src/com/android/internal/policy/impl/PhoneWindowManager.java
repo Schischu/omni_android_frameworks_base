@@ -658,6 +658,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private boolean mOffscreenGestureSupport;
     private boolean mVolumeWakeSupport;
     private boolean mHomeWakeSupport;
+    private boolean mPersistHomeWakeSupport;
 
     // Maps global key codes to the components that will handle them.
     private GlobalKeyManager mGlobalKeyManager;
@@ -1511,6 +1512,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 com.android.internal.R.bool.config_hasRemovableLid);
         mBackKillTimeout = mContext.getResources().getInteger(
                 com.android.internal.R.integer.config_backKillTimeout);
+        mPersistHomeWakeSupport = mContext.getResources().getBoolean(
+                com.android.internal.R.bool.config_persistHomeWakeSupport);
 
         updateKeyAssignments();
 
@@ -1541,13 +1544,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 com.android.internal.R.integer.config_doublePressOnPowerBehavior);
         mTriplePressOnPowerBehavior = mContext.getResources().getInteger(
                 com.android.internal.R.integer.config_triplePressOnPowerBehavior);
-
-        mDeviceHardwareKeys = mContext.getResources().getInteger(
-                com.android.internal.R.integer.config_deviceHardwareKeys);
-        mBackKillTimeout = mContext.getResources().getInteger(
-                com.android.internal.R.integer.config_backKillTimeout);
-
-        updateKeyAssignments();
 
         mAccessibilityManager = (AccessibilityManager) context.getSystemService(
                 Context.ACCESSIBILITY_SERVICE);
@@ -1970,9 +1966,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     Settings.System.VOLUME_BUTTON_WAKE,
                     0,
                     UserHandle.USER_CURRENT) != 0;
+
             mHomeWakeSupport = Settings.System.getIntForUser(resolver,
                     Settings.System.HOME_BUTTON_WAKE,
-                    0,
+                    (mPersistHomeWakeSupport ? 1 : 0),
                     UserHandle.USER_CURRENT) != 0;
         }
         if (updateRotation) {

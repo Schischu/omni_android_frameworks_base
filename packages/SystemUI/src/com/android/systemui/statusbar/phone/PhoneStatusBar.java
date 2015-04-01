@@ -820,7 +820,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 				{
 					mBatteryLevel.setTextColor(0xFF00FF00);
 				}
-				else if (level > 14)
+				else if (level > 15)
 				{
 					mBatteryLevel.setTextColor(0xFFFFFF00);
 				}

@@ -2035,20 +2035,6 @@ public final class Settings {
          */
         public static final int SCREEN_BRIGHTNESS_MODE_AUTOMATIC = 1;
 
-
-        /**
-         * List of QS tile names
-         * @hide
-         */
-        public static final String QS_TILES = "sysui_qs_tiles";
-
-        /**
-         * Use "main" tiles on the first row of the quick settings panel
-         * 0 = no, 1 = yes
-         * @hide
-         */
-        public static final String QS_USE_MAIN_TILES = "sysui_qs_main_tiles";
-
         /**
          * Enable/disable overwrite default value for ambient display
          * @hide

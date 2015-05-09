@@ -118,7 +118,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.util.TypedValue;
 
 import com.android.internal.statusbar.StatusBarIcon;
 import com.android.internal.util.omni.TaskUtils;
@@ -281,7 +280,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private UnlockMethodCache mUnlockMethodCache;
     private DozeServiceHost mDozeServiceHost;
     private boolean mScreenOnComingFromTouch;
-    private TextView mBatteryLevel;
     private PointF mScreenOnTouchLocation;
 
 
@@ -665,7 +663,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mNotificationPanel = (NotificationPanelView) mStatusBarWindow.findViewById(
                 R.id.notification_panel);
         mNotificationPanel.setStatusBar(this);
-		mBatteryLevel = (TextView)mStatusBarWindow.findViewById(R.id.battery_level);
         if (!ActivityManager.isHighEndGfx()) {
             mStatusBarWindow.setBackground(null);
             mNotificationPanel.setBackground(new FastColorDrawable(context.getResources().getColor(
@@ -813,21 +810,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 }
             }
             @Override
-            public void onBatteryLevelChanged(int level, boolean pluggedIn, boolean charging) 
-			{
-				mBatteryLevel.setText(level+"%");
-				if(level > 50)
-				{
-					mBatteryLevel.setTextColor(0xFF00FF00);
-				}
-				else if (level > 15)
-				{
-					mBatteryLevel.setTextColor(0xFFFFFF00);
-				}
-				else
-				{
-					mBatteryLevel.setTextColor(0xFFFF0000);
-				}
+            public void onBatteryLevelChanged(int level, boolean pluggedIn, boolean charging) {
+				//noop
             }
         });
         mNetworkController = new NetworkControllerImpl(mContext);

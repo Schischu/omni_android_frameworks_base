@@ -489,6 +489,7 @@
 
     <!-- The text size for battery level -->
     <dimen name="battery_level_text_size">12sp</dimen>
+    <dimen name="battery_level_text_size_circle">9sp</dimen> <!--Circle text needs to small enough to fit in the circle but still be readable-->
 
     <!-- TrustDrawable: Minimum inner radius of the breathing animation -->
     <dimen name="trust_circle_inner_radius_visible_min">22dp</dimen>

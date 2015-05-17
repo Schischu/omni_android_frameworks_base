@@ -121,7 +121,7 @@ public class BatteryCirclePercentView extends AbstractBatteryView {
         Typeface font = Typeface.create("sans-serif", Typeface.NORMAL);
         mTextPaint.setTypeface(font);
         mTextPaint.setTextAlign(Paint.Align.CENTER);
-        mTextSize = getResources().getDimensionPixelSize(R.dimen.battery_level_text_size);
+        mTextSize = getResources().getDimensionPixelSize(R.dimen.battery_level_text_size_circle);
         mTextPaint.setTextSize(mTextSize);
 
         mChargeColor = getResources().getColor(R.color.batterymeter_charge_color);
@@ -167,7 +167,7 @@ public class BatteryCirclePercentView extends AbstractBatteryView {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        mWidth = (mShowPercent ? (mTextWidth + mStrokeWidth) : 0) + mCircleWidth + 2 * mStrokeWidth;
+        mWidth = /*(mShowPercent ? (mTextWidth + mStrokeWidth) : 0) +*/ mCircleWidth + 2 * mStrokeWidth;
         mHeight = mCircleWidth + 2 * mStrokeWidth;
         setMeasuredDimension(mWidth, mHeight);
     }
@@ -215,20 +215,23 @@ public class BatteryCirclePercentView extends AbstractBatteryView {
         // draw colored arc representing charge level
         c.drawArc(mFrame, 270, 3.6f * padLevel, false, mBatteryPaint);
 
-        if (tracker.plugged) {
+        if (tracker.plugged && !mShowPercent) 
+		{//don't draw if percentage is chosen, they overlap
             // define the bolt shape
             final float bl = mFrame.left + mFrame.width() / 3f;
             final float bt = mFrame.top + mFrame.height() / 4f;
             final float br = mFrame.right - mFrame.width() / 4f;
             final float bb = mFrame.bottom - mFrame.height() / 6f;
             if (mBoltFrame.left != bl || mBoltFrame.top != bt
-                        || mBoltFrame.right != br || mBoltFrame.bottom != bb) {
+                        || mBoltFrame.right != br || mBoltFrame.bottom != bb) 
+			{
                 mBoltFrame.set(bl, bt, br, bb);
                 mBoltPath.reset();
                 mBoltPath.moveTo(
                         mBoltFrame.left + mBoltPoints[0] * mBoltFrame.width(),
                         mBoltFrame.top + mBoltPoints[1] * mBoltFrame.height());
-                for (int i = 2; i < mBoltPoints.length; i += 2) {
+                for (int i = 2; i < mBoltPoints.length; i += 2) 
+				{
                     mBoltPath.lineTo(
                             mBoltFrame.left + mBoltPoints[i] * mBoltFrame.width(),
                             mBoltFrame.top + mBoltPoints[i + 1] * mBoltFrame.height());
@@ -240,17 +243,21 @@ public class BatteryCirclePercentView extends AbstractBatteryView {
             c.drawPath(mBoltPath, mBoltPaint);
         }
 
-        if (mShowPercent) {
-            String percentage = NumberFormat.getPercentInstance().format((double) level / 100.0);
-            if (level > mCriticalLevel) {
+        if (mShowPercent) 
+		{
+			//use int instance to not show % sign
+            String percentage = NumberFormat.getIntegerInstance().format((double) level);
+            if (level > mCriticalLevel)
+			{
                 mTextPaint.setColor(getColorForLevel(level));
             }
-            if (tracker.plugged) {
+            if (tracker.plugged)
+			{
                 mTextPaint.setColor(mChargeColor);
             }
             float textHeight = mTextPaint.descent() - mTextPaint.ascent();
-            float textOffset = (textHeight / 2) - mTextPaint.descent() + mPercentOffsetY;
-            RectF bounds = new RectF(mCircleWidth + 3 * mStrokeWidth, 0, mWidth, mHeight);
+            float textOffset = (textHeight / 2) - mTextPaint.descent() + mPercentOffsetY - 1;
+            RectF bounds = new RectF(mCircleWidth -4, 0, mWidth/2, mHeight);
             c.drawText(percentage, bounds.centerX(), bounds.centerY() + textOffset, mTextPaint);
         }
     }

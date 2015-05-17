@@ -835,6 +835,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.HARDWARE_KEYS_DISABLE), false, this,
                     UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.NAVIGATION_BAR_SHOW), false, this,
+                    UserHandle.USER_ALL);
 
             updateSettings();
         }
@@ -1666,6 +1669,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         final boolean hasAppSwitch = (mDeviceHardwareKeys & KEY_MASK_APP_SWITCH) != 0;
         final ContentResolver resolver = mContext.getContentResolver();
 
+        mHardwareKeysDisable = Settings.System.getIntForUser(resolver,
+                Settings.System.HARDWARE_KEYS_DISABLE,
+                0,
+                UserHandle.USER_CURRENT) != 0;
+
         // initialize all assignments to sane defaults
         mPressOnHomeBehavior = KEY_ACTION_HOME;
         mPressOnMenuBehavior = KEY_ACTION_MENU;
@@ -1838,15 +1846,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         // Allow the navigation bar to move on small devices (phones).
         mNavigationBarCanMove = shortSizeDp < 600;
 
-        mHasNavigationBar = res.getBoolean(com.android.internal.R.bool.config_showNavigationBar);
-        // Allow a system property to override this. Used by the emulator.
-        // See also hasNavigationBar().
-        String navBarOverride = SystemProperties.get("qemu.hw.mainkeys");
-        if ("1".equals(navBarOverride)) {
-            mHasNavigationBar = false;
-        } else if ("0".equals(navBarOverride)) {
-            mHasNavigationBar = true;
-        }
+        mHasNavigationBar = DeviceUtils.deviceSupportNavigationBar(mContext);
 
         // For demo purposes, allow the rotation of the HDMI display to be controlled.
         // By default, HDMI locks rotation to landscape.
@@ -1918,6 +1918,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     UserHandle.USER_CURRENT);
             mVolBtnMusicControls = (Settings.System.getIntForUser(resolver,
                     Settings.System.VOLBTN_MUSIC_CONTROLS, 1, UserHandle.USER_CURRENT) == 1);
+            mHasNavigationBar = DeviceUtils.deviceSupportNavigationBar(mContext);
+
             // Configure wake gesture.
             boolean wakeGestureEnabledSetting = Settings.Secure.getIntForUser(resolver,
                     Settings.Secure.WAKE_GESTURE_ENABLED, 0,
@@ -1983,11 +1985,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             mHomeWakeSupport = Settings.System.getIntForUser(resolver,
                     Settings.System.HOME_BUTTON_WAKE,
                     (mPersistHomeWakeSupport ? 1 : 0),
-                    UserHandle.USER_CURRENT) != 0;
-
-            mHardwareKeysDisable = Settings.System.getIntForUser(resolver,
-                    Settings.System.HARDWARE_KEYS_DISABLE,
-                    0,
                     UserHandle.USER_CURRENT) != 0;
         }
         if (updateRotation) {
@@ -2915,6 +2912,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
                 if (canceled) {
                     Log.i(TAG, "Ignoring HOME; event canceled.");
+                    return -1;
+                }
+
+                if (mPressOnHomeBehavior == KEY_ACTION_NOTHING && !virtualKey) {
                     return -1;
                 }
 
@@ -5340,6 +5341,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     }
                 }
 
+
                 if (isMusicActive() && (result & ACTION_PASS_TO_USER) == 0) {
                     if (mVolBtnMusicControls && down && (keyCode != KeyEvent.KEYCODE_VOLUME_MUTE)) {
                         mIsLongPress = false;
@@ -5349,6 +5351,22 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                                 new KeyEvent(event.getDownTime(), event.getEventTime(), event.getAction(), newKeyCode, 0));
                         msg.setAsynchronous(true);
                         mHandler.sendMessageDelayed(msg, ViewConfiguration.getLongPressTimeout());
+                    if ((result & ACTION_PASS_TO_USER) == 0) {
+                        // volume key can be a wakeup event
+                        boolean sendVolumeKey = true;
+                        if (mVolumeWakeSupport && !interactive) {
+                            sendVolumeKey = false;
+                        }
+                        if (sendVolumeKey) {
+                            if (DEBUG_INPUT) {
+                                Slog.d(TAG, "interceptKeyTq sendVolumeKeyEvent");
+                            }
+                            // If we aren't passing to the user and no one else
+                            // handled it send it to the session manager to figure
+                            // out.
+                            MediaSessionLegacyHelper.getHelper(mContext)
+                                    .sendVolumeKeyEvent(event, true);
+                        }
                         break;
                     } else {
                         if (mVolBtnMusicControls && !down) {
@@ -7177,8 +7195,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 if (DEBUG_WAKEUP) Log.i(TAG, "isOffscreenWakeKey: mVolumeWakeSupport " + mVolumeWakeSupport);
                 return mVolumeWakeSupport;
             case KeyEvent.KEYCODE_HOME:
-                if (DEBUG_WAKEUP) Log.i(TAG, "isOffscreenWakeKey: mHomeWakeSupport " + mHomeWakeSupport);
-                return mHomeWakeSupport;
+                if (!mHardwareKeysDisable) {
+                    if (DEBUG_WAKEUP) Log.i(TAG, "isOffscreenWakeKey: mHomeWakeSupport " + mHomeWakeSupport);
+                    return mHomeWakeSupport;
+                }
         }
         return false;
     }

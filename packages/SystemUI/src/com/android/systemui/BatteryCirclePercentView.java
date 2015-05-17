@@ -167,7 +167,7 @@ public class BatteryCirclePercentView extends AbstractBatteryView {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        mWidth = /*(mShowPercent ? (mTextWidth + mStrokeWidth) : 0) +*/ mCircleWidth + 2 * mStrokeWidth;
+        mWidth = mCircleWidth + 2 * mStrokeWidth;
         mHeight = mCircleWidth + 2 * mStrokeWidth;
         setMeasuredDimension(mWidth, mHeight);
     }
@@ -256,8 +256,8 @@ public class BatteryCirclePercentView extends AbstractBatteryView {
                 mTextPaint.setColor(mChargeColor);
             }
             float textHeight = mTextPaint.descent() - mTextPaint.ascent();
-            float textOffset = (textHeight / 2) - mTextPaint.descent() + mPercentOffsetY - 1;
-            RectF bounds = new RectF(mCircleWidth -4, 0, mWidth/2, mHeight);
+            float textOffset = ((textHeight / 2) - mTextPaint.descent() + mPercentOffsetY)*0.97f;
+            RectF bounds = new RectF(mCircleWidth*0.77f, 0, mWidth/2, mHeight);
             c.drawText(percentage, bounds.centerX(), bounds.centerY() + textOffset, mTextPaint);
         }
     }

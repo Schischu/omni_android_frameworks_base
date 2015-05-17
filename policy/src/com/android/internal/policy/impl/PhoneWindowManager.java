@@ -5351,22 +5351,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                                 new KeyEvent(event.getDownTime(), event.getEventTime(), event.getAction(), newKeyCode, 0));
                         msg.setAsynchronous(true);
                         mHandler.sendMessageDelayed(msg, ViewConfiguration.getLongPressTimeout());
-                    if ((result & ACTION_PASS_TO_USER) == 0) {
-                        // volume key can be a wakeup event
-                        boolean sendVolumeKey = true;
-                        if (mVolumeWakeSupport && !interactive) {
-                            sendVolumeKey = false;
-                        }
-                        if (sendVolumeKey) {
-                            if (DEBUG_INPUT) {
-                                Slog.d(TAG, "interceptKeyTq sendVolumeKeyEvent");
-                            }
-                            // If we aren't passing to the user and no one else
-                            // handled it send it to the session manager to figure
-                            // out.
-                            MediaSessionLegacyHelper.getHelper(mContext)
-                                    .sendVolumeKeyEvent(event, true);
-                        }
                         break;
                     } else {
                         if (mVolBtnMusicControls && !down) {
@@ -5378,12 +5362,26 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     }
                 }
 
-                if ((result & ACTION_PASS_TO_USER) == 0) {
-                    // If we aren't passing to the user and no one else
-                    // handled it send it to the session manager to figure
-                    // out.
-                    MediaSessionLegacyHelper.getHelper(mContext)
-                            .sendVolumeKeyEvent(event, true);
+                if ((result & ACTION_PASS_TO_USER) == 0) 
+				{
+					// volume key can be a wakeup event
+					boolean sendVolumeKey = true;
+					if (mVolumeWakeSupport && !interactive) 
+					{
+						sendVolumeKey = false;
+					}
+					if (sendVolumeKey)
+					{
+						if (DEBUG_INPUT)
+						{
+							Slog.d(TAG, "interceptKeyTq sendVolumeKeyEvent");
+						}
+						// If we aren't passing to the user and no one else
+						// handled it send it to the session manager to figure
+						// out.
+						MediaSessionLegacyHelper.getHelper(mContext)
+						.sendVolumeKeyEvent(event, true);
+					}
                     break;
                 }
             }

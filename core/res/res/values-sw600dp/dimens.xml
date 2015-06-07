@@ -72,7 +72,7 @@
 
     <!-- Height of the bottom navigation bar in portrait; on sw600dp devices
          this is a bit taller -->
-    <dimen name="navigation_bar_height_portrait">56dp</dimen>
+    <dimen name="navigation_bar_height_portrait">36dp</dimen>
 
     <!-- Preference fragment padding, sides -->
     <dimen name="preference_fragment_padding_side">24dp</dimen>

@@ -2417,6 +2417,13 @@ public final class Settings {
         public static final String ACCELEROMETER_ROTATION = "accelerometer_rotation";
 
         /**
+         * Control whether the accelerometer will be used to change lockscreen
+         * orientation.  If 0, it will not be used; if 1, it will be used by default.
+         * @hide
+         */
+        public static final String LOCKSCREEN_ROTATION = "lockscreen_rotation";
+
+        /**
          * Control the type of rotation which can be performed using the accelerometer
          * if ACCELEROMETER_ROTATION is enabled.
          * Value is a bitwise combination of
@@ -3127,6 +3134,13 @@ public final class Settings {
          * @hide
          */
         public static final String NAVIGATION_BAR_RECENTS = "navigation_bar_recents";
+
+        /**
+         * custom screen brightness for doze mode
+         * @hide
+         */
+        public static final String SCREEN_BRIGHTNESS_DOZE = "screen_brightness_doze";
+
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings

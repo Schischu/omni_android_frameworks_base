@@ -1931,6 +1931,13 @@ public final class Settings {
             "bluetooth_discoverability";
 
         /**
+         * If all file types can be accepted over Bluetooth OBEX.
+         * @hide
+         */
+        public static final String BLUETOOTH_ACCEPT_ALL_FILES =
+            "bluetooth_accept_all_files";
+
+        /**
          * Bluetooth discoverability timeout.  If this value is nonzero, then
          * Bluetooth becomes discoverable for a certain number of seconds,
          * after which is becomes simply connectable.  The value is in seconds.
@@ -3141,6 +3148,17 @@ public final class Settings {
          */
         public static final String SCREEN_BRIGHTNESS_DOZE = "screen_brightness_doze";
 
+        /**
+         * Whether to use the custom status bar header or not
+         * @hide
+         */
+        public static final String STATUS_BAR_CUSTOM_HEADER = "status_bar_custom_header";
+
+        /**
+         * Current active provider
+         * @hide
+         */
+        public static final String STATUS_BAR_CUSTOM_HEADER_PROVIDER = "status_bar_custom_header_provider";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings

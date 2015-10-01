@@ -2541,82 +2541,6 @@ public final class Settings {
         public static final String NOTIFICATION_LIGHT_PULSE = "notification_light_pulse";
 
         /**
-         * What color to use for the notification LED by default
-         * @hide
-         */
-        public static final String NOTIFICATION_LIGHT_PULSE_DEFAULT_COLOR =
-                "notification_light_pulse_default_color";
-
-        /**
-         * How long to flash the notification LED by default
-         * @hide
-         */
-        public static final String NOTIFICATION_LIGHT_PULSE_DEFAULT_LED_ON =
-                "notification_light_pulse_default_led_on";
-
-        /**
-         * How long to wait between flashes for the notification LED by default
-         * @hide
-         */
-        public static final String NOTIFICATION_LIGHT_PULSE_DEFAULT_LED_OFF =
-                "notification_light_pulse_default_led_off";
-
-        /**
-         * What color to use for the missed call notification LED
-         * @hide
-         */
-        public static final String NOTIFICATION_LIGHT_PULSE_CALL_COLOR =
-                "notification_light_pulse_call_color";
-
-        /**
-         * How long to flash the missed call notification LED
-         * @hide
-         */
-        public static final String NOTIFICATION_LIGHT_PULSE_CALL_LED_ON =
-                "notification_light_pulse_call_led_on";
-
-        /**
-         * How long to wait between flashes for the missed call notification LED
-         * @hide
-         */
-        public static final String NOTIFICATION_LIGHT_PULSE_CALL_LED_OFF =
-                "notification_light_pulse_call_led_off";
-        /**
-         * What color to use for the voicemail notification LED
-         * @hide
-         */
-        public static final String NOTIFICATION_LIGHT_PULSE_VMAIL_COLOR =
-                "notification_light_pulse_vmail_color";
-
-        /**
-         * How long to flash the voicemail notification LED
-         * @hide
-         */
-        public static final String NOTIFICATION_LIGHT_PULSE_VMAIL_LED_ON =
-                "notification_light_pulse_vmail_led_on";
-
-        /**
-         * How long to wait between flashes for the voicemail notification LED
-         * @hide
-         */
-        public static final String NOTIFICATION_LIGHT_PULSE_VMAIL_LED_OFF =
-                "notification_light_pulse_vmail_led_off";
-
-        /**
-         * Whether to use the custom LED values for the notification pulse LED.
-         * @hide
-         */
-        public static final String NOTIFICATION_LIGHT_PULSE_CUSTOM_ENABLE =
-                "notification_light_pulse_custom_enable";
-
-        /**
-         * Which custom LED values to use for the notification pulse LED.
-         * @hide
-         */
-        public static final String NOTIFICATION_LIGHT_PULSE_CUSTOM_VALUES =
-                "notification_light_pulse_custom_values";
-
-        /**
          * Whether the battery light should be enabled (if hardware supports it)
          * The value is boolean (1 or 0).
          * @hide
@@ -2647,6 +2571,12 @@ public final class Settings {
          * @hide
          */
         public static final String BATTERY_LIGHT_FULL_COLOR = "battery_light_full_color";
+
+        /**
+         * What color to use for the battery LED while charging - really full (100%)
+         * @hide
+         */
+        public static final String BATTERY_LIGHT_REALLY_FULL_COLOR = "battery_light_really_full_color";
 
         /**
          * Show pointer location on screen?
@@ -2821,9 +2751,6 @@ public final class Settings {
          * @hide
          */
         public static final String EGG_MODE = "egg_mode";
-
-		//Cyano-port long press volume buttons
-		public static final String VOLBTN_MUSIC_CONTROLS = "button_volume_music_control";
 
         /**
          * Whether volume button press shuld be treated as wake key
@@ -3159,6 +3086,46 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_CUSTOM_HEADER_PROVIDER = "status_bar_custom_header_provider";
+
+        /**
+         * Enable/disable brightness control in statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_BRIGHTNESS_CONTROL = "status_bar_brightness_control";
+
+        /**
+         * Network traffic indicator, goes from least to greatest significant bitwise
+         * 0 = Display up-stream traffic if set
+         * 1 = Display down-stream traffic if set
+         * 2 = Show as Byte/s if set
+         * 16-31 = Refresh interval(ms) min: 250 max: 32750 default: 1000
+         * @hide
+         */
+        public static final String NETWORK_TRAFFIC_STATE = "network_traffic_state";
+
+        /**
+         * Network stats Color style
+         * @hide
+         */
+        public static final String NETWORK_TRAFFIC_COLOR = "network_traffic_color";
+
+        /**
+         * Whether or not to hide the network traffic indicator when there is no activity
+         * @hide
+         */
+        public static final String NETWORK_TRAFFIC_AUTOHIDE = "network_traffic_autohide";
+
+        /**
+         * Network traffic inactivity threshold (default is 10 kBs)
+         * @hide
+         */
+        public static final String NETWORK_TRAFFIC_AUTOHIDE_THRESHOLD = "network_traffic_autohide_threshold";
+
+        /**
+         * Show when WiFi or data mobile is sending/receiving data
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_ACTIVITY = "status_bar_network_activity";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
@@ -3633,12 +3600,6 @@ public final class Settings {
         public static void getMovedKeys(HashSet<String> outKeySet) {
             outKeySet.addAll(MOVED_TO_GLOBAL);
         }
-
-        /** 
-         * The hostname for this device 
-         * @hide 
-         */ 
-        public static final String DEVICE_HOSTNAME = "device_hostname";
 
         /**
          * Look up a name in the database.

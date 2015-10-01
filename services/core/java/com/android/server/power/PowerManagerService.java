@@ -1351,11 +1351,10 @@ public final class PowerManagerService extends SystemService
                 // Some devices also wake the device when plugged or unplugged because
                 // they don't have a charging LED.
                 final long now = SystemClock.uptimeMillis();
-				/*
                 if (shouldWakeUpWhenPluggedOrUnpluggedLocked(wasPowered, oldPlugType,
                         dockedOnWirelessCharger)) {
                     wakeUpNoUpdateLocked(now, Process.SYSTEM_UID);
-                }*/
+                }
                 userActivityNoUpdateLocked(
                         now, PowerManager.USER_ACTIVITY_EVENT_OTHER, 0, Process.SYSTEM_UID);
 

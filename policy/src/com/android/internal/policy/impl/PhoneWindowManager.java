@@ -146,11 +146,6 @@ import static android.view.WindowManagerPolicy.WindowManagerFuncs.CAMERA_LENS_CO
  * of both of those when held.
  */
 public class PhoneWindowManager implements WindowManagerPolicy {
-
-    // Behavior of volbtn music controls
-    boolean mVolBtnMusicControls;
-    boolean mIsLongPress;
-
     static final String TAG = "WindowManager";
     static final boolean DEBUG = false;
     static final boolean localLOGV = false;
@@ -676,19 +671,13 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private static final int MSG_DISPATCH_SHOW_GLOBAL_ACTIONS = 10;
     private static final int MSG_HIDE_BOOT_MESSAGE = 11;
     private static final int MSG_LAUNCH_VOICE_ASSIST_WITH_WAKE_LOCK = 12;
-	private static final int MSG_DISPATCH_VOLKEY_WITH_WAKE_LOCK = 15;
     private static final int MSG_POWER_DELAYED_PRESS = 13;
     private static final int MSG_POWER_LONG_PRESS = 14;
-
 
     private class PolicyHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case MSG_DISPATCH_VOLKEY_WITH_WAKE_LOCK:
-                    dispatchMediaKeyWithWakeLockToAudioService((KeyEvent)msg.obj);
-                    dispatchMediaKeyWithWakeLockToAudioService(KeyEvent.changeAction((KeyEvent)msg.obj, KeyEvent.ACTION_UP));
-                    break;
                 case MSG_ENABLE_POINTER_LOCATION:
                     enablePointerLocation();
                     break;
@@ -751,9 +740,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         void observe() {
             // Observe all users' changes
             ContentResolver resolver = mContext.getContentResolver();
-			resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.VOLBTN_MUSIC_CONTROLS), false, this,
-                    UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.END_BUTTON_BEHAVIOR), false, this,
                     UserHandle.USER_ALL);
@@ -1915,8 +1901,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             mRingHomeBehavior = Settings.System.getIntForUser(resolver,
                     Settings.System.HOME_BUTTON_ANSWER, 0,
                     UserHandle.USER_CURRENT);
-            mVolBtnMusicControls = (Settings.System.getIntForUser(resolver,
-                    Settings.System.VOLBTN_MUSIC_CONTROLS, 1, UserHandle.USER_CURRENT) == 1);
             mHasNavigationBar = DeviceUtils.deviceSupportNavigationBar(mContext);
 
             // Configure wake gesture.
@@ -2824,6 +2808,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     @Override
     public long interceptKeyBeforeDispatching(WindowState win, KeyEvent event, int policyFlags) {
         final boolean keyguardOn = keyguardOn();
+        final int keyCode = event.getKeyCode();
         final int repeatCount = event.getRepeatCount();
         final int metaState = event.getMetaState();
         final int flags = event.getFlags();
@@ -2831,7 +2816,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         final boolean canceled = event.isCanceled();
         final boolean longPress = (flags & KeyEvent.FLAG_LONG_PRESS) != 0;
         final boolean virtualKey = event.getDeviceId() == KeyCharacterMap.VIRTUAL_KEYBOARD;
-        int keyCode = event.getKeyCode();
         final int scanCode = event.getScanCode();
 
         if (DEBUG_INPUT) {
@@ -5034,20 +5018,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         setHdmiPlugged(!mHdmiPlugged);
     }
 
-    /**
-     * @return Whether music is being played right now "locally" (e.g. on the device's speakers
-     *    or wired headphones) or "remotely" (e.g. on a device using the Cast protocol and
-     *    controlled by this device, or through remote submix).
-     */
-    private boolean isMusicActive() {
-        final AudioManager am = (AudioManager)mContext.getSystemService(Context.AUDIO_SERVICE);
-        if (am == null) {
-            Log.w(TAG, "isMusicActive: couldn't get AudioManager reference");
-            return false;
-        }
-        return am.isMusicActive();
-    }
-
     final Object mScreenshotLock = new Object();
     final Object mScreenrecordLock = new Object();
     ServiceConnection mScreenshotConnection = null;
@@ -5346,53 +5316,28 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                             break;
                         }
                     }
-                }
 
-
-                if (isMusicActive() && (result & ACTION_PASS_TO_USER) == 0) {
-                    if (mVolBtnMusicControls && down && (keyCode != KeyEvent.KEYCODE_VOLUME_MUTE)) {
-                        mIsLongPress = false;
-                        int newKeyCode = event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP ?
-                                KeyEvent.KEYCODE_MEDIA_NEXT : KeyEvent.KEYCODE_MEDIA_PREVIOUS;
-                        Message msg = mHandler.obtainMessage(MSG_DISPATCH_VOLKEY_WITH_WAKE_LOCK,
-                                new KeyEvent(event.getDownTime(), event.getEventTime(), event.getAction(), newKeyCode, 0));
-                        msg.setAsynchronous(true);
-                        mHandler.sendMessageDelayed(msg, ViewConfiguration.getLongPressTimeout());
-                        break;
-                    } else {
-                        if (mVolBtnMusicControls && !down) {
-                            mHandler.removeMessages(MSG_DISPATCH_VOLKEY_WITH_WAKE_LOCK);
-                            if (mIsLongPress) {
-                                break;
-                            }
+                    if ((result & ACTION_PASS_TO_USER) == 0) {
+                        // volume key can be a wakeup event
+                        boolean sendVolumeKey = true;
+                        if (mVolumeWakeSupport && !interactive) {
+                            sendVolumeKey = false;
                         }
+                        if (sendVolumeKey) {
+                            if (DEBUG_INPUT) {
+                                Slog.d(TAG, "interceptKeyTq sendVolumeKeyEvent");
+                            }
+                            // If we aren't passing to the user and no one else
+                            // handled it send it to the session manager to figure
+                            // out.
+                            MediaSessionLegacyHelper.getHelper(mContext)
+                                    .sendVolumeKeyEvent(event, true);
+                        }
+                        break;
                     }
                 }
-
-                if ((result & ACTION_PASS_TO_USER) == 0) 
-				{
-					// volume key can be a wakeup event
-					boolean sendVolumeKey = true;
-					if (mVolumeWakeSupport && !interactive) 
-					{
-						sendVolumeKey = false;
-					}
-					if (sendVolumeKey)
-					{
-						if (DEBUG_INPUT)
-						{
-							Slog.d(TAG, "interceptKeyTq sendVolumeKeyEvent");
-						}
-						// If we aren't passing to the user and no one else
-						// handled it send it to the session manager to figure
-						// out.
-						MediaSessionLegacyHelper.getHelper(mContext)
-						.sendVolumeKeyEvent(event, true);
-					}
-                    break;
-                }
+                break;
             }
-			break;
 
             case KeyEvent.KEYCODE_ENDCALL: {
                 result &= ~ACTION_PASS_TO_USER;
@@ -5432,10 +5377,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
 
             case KeyEvent.KEYCODE_POWER: {
-                if ((mTopFullscreenOpaqueWindowState.getAttrs().privateFlags
-                        & WindowManager.LayoutParams.PRIVATE_FLAG_PREVENT_POWER_KEY) != 0){
-                    return result;
-                }
                 result &= ~ACTION_PASS_TO_USER;
                 isWakeKey = false; // wake-up will be handled separately
                 if (down) {
@@ -6426,7 +6367,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                             return true;
                         }
                     };
-                    mBootMsgDialog.setTitle(R.string.android_upgrading_installing_title);
+                    if (mContext.getPackageManager().isUpgrade()) {
+                        mBootMsgDialog.setTitle(R.string.android_upgrading_title);
+                    } else {
+                        mBootMsgDialog.setTitle(R.string.android_start_title);
+                    }
                     mBootMsgDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                     mBootMsgDialog.setIndeterminate(true);
                     mBootMsgDialog.getWindow().setType(

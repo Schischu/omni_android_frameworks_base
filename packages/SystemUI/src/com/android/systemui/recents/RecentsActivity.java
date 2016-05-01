@@ -32,6 +32,7 @@ import android.os.SystemClock;
 import android.os.UserHandle;
 import android.util.Pair;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewStub;
 import android.widget.Toast;
@@ -242,11 +243,20 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
                 mEmptyView = mEmptyViewStub.inflate();
             }
             mEmptyView.setVisibility(View.VISIBLE);
+            mEmptyView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    dismissRecentsToFocusedTaskOrHome(true);
+                    return true;
+                }
+            });
             mRecentsView.setSearchBarVisibility(View.GONE);
+            findViewById(R.id.floating_action_button).setVisibility(View.GONE);
         } else {
             if (mEmptyView != null) {
                 mEmptyView.setVisibility(View.GONE);
             }
+            findViewById(R.id.floating_action_button).setVisibility(View.VISIBLE);
             if (mRecentsView.hasSearchBar()) {
                 mRecentsView.setSearchBarVisibility(View.VISIBLE);
             } else {
@@ -507,6 +517,7 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
 
         // Animate the SystemUI scrim views
         mScrimViews.startEnterRecentsAnimation();
+        mRecentsView.startFABanimation();
     }
 
     @Override
@@ -564,6 +575,8 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
 
         // Dismiss Recents to the focused Task or Home
         dismissRecentsToFocusedTaskOrHome(true);
+
+        mRecentsView.endFABanimation();
     }
 
     /** Called when debug mode is triggered */
@@ -599,21 +612,25 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
     public void onExitToHomeAnimationTriggered() {
         // Animate the SystemUI scrim views out
         mScrimViews.startExitRecentsAnimation();
+        mRecentsView.endFABanimation();
     }
 
     @Override
     public void onTaskViewClicked() {
+        mRecentsView.endFABanimation();
     }
 
     @Override
     public void onTaskLaunchFailed() {
         // Return to Home
         dismissRecentsToHomeRaw(true);
+        mRecentsView.endFABanimation();
     }
 
     @Override
     public void onAllTaskViewsDismissed() {
         mFinishLaunchHomeRunnable.run();
+        mRecentsView.endFABanimation();
     }
 
     @Override

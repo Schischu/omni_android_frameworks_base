@@ -2969,6 +2969,27 @@ public final class Settings {
         public static final String STATUSBAR_BATTERY_PERCENT = "statusbar_battery_percent";
 
         /**
+         * boolean value if the battery percent should be shown inside the image
+         *
+         * @hide
+         */
+        public static final String STATUSBAR_BATTERY_PERCENT_INSIDE = "statusbar_battery_percent_inside";
+
+        /**
+         * boolean value if the charging flash should be displayed
+         *
+         * @hide
+         */
+        public static final String STATUSBAR_BATTERY_CHARGING_IMAGE = "statusbar_battery_charging_image";
+
+        /**
+         * int value of the color to use when charging -1 disabled
+         *
+         * @hide
+         */
+        public static final String STATUSBAR_BATTERY_CHARGING_COLOR = "statusbar_battery_charging_color";
+
+        /**
          * Custom button brightness value for manual mode
          *
          * @hide
@@ -3126,6 +3147,12 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_NETWORK_ACTIVITY = "status_bar_network_activity";
+
+        /**
+         * Enable to use tablet style navigation bar
+         * @hide
+         */
+        public static final String ENABLE_TABLET_NAVIGATION = "enable_tablet_navigation";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
@@ -4100,6 +4127,15 @@ public final class Settings {
          * <p>0 = do not allow use of the package installer
          */
         public static final String INSTALL_NON_MARKET_APPS = "install_non_market_apps";
+
+        /**
+         * Whether applications can fake a signature.
+         *
+         * <p>1 = permit apps to fake signature
+         * <p>0 = disable this feature
+         * @hide
+         */
+        public static final String ALLOW_SIGNATURE_FAKE = "allow_signature_fake";
 
         /**
          * Comma-separated list of location providers that activities may access. Do not rely on

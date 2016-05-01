@@ -174,6 +174,7 @@ import com.android.systemui.statusbar.policy.KeyguardMonitor;
 import com.android.systemui.statusbar.policy.KeyguardUserSwitcher;
 import com.android.systemui.statusbar.policy.LocationControllerImpl;
 import com.android.systemui.statusbar.policy.NetworkControllerImpl;
+import com.android.systemui.statusbar.policy.NetworkTraffic;
 import com.android.systemui.statusbar.policy.NextAlarmController;
 import com.android.systemui.statusbar.policy.PreviewInflater;
 import com.android.systemui.statusbar.policy.RotationLockControllerImpl;
@@ -288,12 +289,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     StatusBarWindowView mStatusBarWindow;
     PhoneStatusBarView mStatusBarView;
     BatteryViewManager mBatteryViewManager;
+    NetworkTraffic mNetworkTraffic;
     private int mStatusBarWindowState = WINDOW_STATE_SHOWING;
     private StatusBarWindowManager mStatusBarWindowManager;
     private UnlockMethodCache mUnlockMethodCache;
     private DozeServiceHost mDozeServiceHost;
     private boolean mScreenOnComingFromTouch;
     private PointF mScreenOnTouchLocation;
+
+    private boolean mEnableTabletNavigation;
 
     int mPixelFormat;
     Object mQueueLock = new Object();
@@ -357,6 +361,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private int mNavigationBarWindowState = WINDOW_STATE_SHOWING;
 
+
     // the tracker view
     int mTrackingPosition; // the position of the top of the tracking view.
 
@@ -384,6 +389,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private int mInitialTouchY;
     private boolean mAutomatic;
     private IPowerManager mPower;
+
     /**
      * {@link android.provider.Settings.System#SCREEN_AUTO_BRIGHTNESS_ADJ} uses the range [-1, 1].
      * Using this factor, it is converted to [0, BRIGHTNESS_ADJ_RESOLUTION] for the SeekBar.
@@ -487,6 +493,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mContext.getContentResolver().registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_NETWORK_ACTIVITY),
                     false, this, UserHandle.USER_ALL);
+            mContext.getContentResolver().registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.ENABLE_TABLET_NAVIGATION),
+                    false, this, UserHandle.USER_ALL);
 
             update();
         }
@@ -517,6 +526,28 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 boolean showIndicators = Settings.System.getIntForUser(
                         mContext.getContentResolver(), Settings.System.STATUS_BAR_NETWORK_ACTIVITY, 0, mCurrentUserId) == 1;
                 mNetworkController.setShowIndicators(showIndicators);
+            }
+
+
+            int tabletNavigation = Settings.System.getIntForUser(
+                    mContext.getContentResolver(), Settings.System.ENABLE_TABLET_NAVIGATION, -1, mCurrentUserId);
+            if (tabletNavigation != -1 && mShowNavBar) {
+                boolean tabletNavigationBool = tabletNavigation == 1;
+                if (tabletNavigationBool != mEnableTabletNavigation) {
+                    if (mNavigationBarView != null){
+                        mWindowManager.removeViewImmediate(mNavigationBarView);
+                        mNavigationBarView = null;
+                    }
+                    mEnableTabletNavigation = tabletNavigationBool;
+                    // removing view and immediately adding it afterward is breaking
+                    // WindowManager so add a small delay before adding
+                    mHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateNavigationBar();
+                        }
+                    }, 500);
+                }
             }
         }
     }
@@ -689,6 +720,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         updateDisplaySize();
         mScrimSrcModeEnabled = mContext.getResources().getBoolean(
                 R.bool.config_status_bar_scrim_behind_use_src);
+
+        mEnableTabletNavigation = Settings.System.getIntForUser(
+                mContext.getContentResolver(), Settings.System.ENABLE_TABLET_NAVIGATION, -1, mCurrentUserId) == 1;
+
         super.start(); // calls createAndAddWindows()
 
         mMediaSessionManager
@@ -794,8 +829,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mShowNavBar = mWindowManagerService.hasNavigationBar();
             if (DEBUG) Log.v(TAG, "hasNavigationBar=" + mShowNavBar);
             if (mShowNavBar) {
-                mNavigationBarView =
-                    (NavigationBarView) View.inflate(context, R.layout.navigation_bar, null);
+                if (mEnableTabletNavigation) {
+                    mNavigationBarView =
+                        (NavigationBarView) View.inflate(context, R.layout.navigation_bar_tablet, null);
+                } else {
+                    mNavigationBarView =
+                        (NavigationBarView) View.inflate(context, R.layout.navigation_bar, null);
+                }
 
                 mNavigationBarView.setDisabledFlags(mDisabled);
                 mNavigationBarView.setBar(this);
@@ -1028,6 +1068,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         LinearLayout batteryContainer = (LinearLayout) mStatusBarView.findViewById(R.id.battery_container);
         mBatteryViewManager = new BatteryViewManager(mContext, batteryContainer, mStatusBarView.getBarTransitions(), null);
         mBatteryViewManager.setBatteryController(mBatteryController);
+
+        mNetworkTraffic = (NetworkTraffic) mStatusBarView.findViewById(R.id.networkTraffic);
 
         mKeyguardStatusBar.setBatteryController(mBatteryController);
         mHeader.setNextAlarmController(mNextAlarmController);
@@ -3458,6 +3500,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         resetUserSetupObserver();
         setControllerUsers();
         mOmniSettingsObserver.update();
+        mBatteryViewManager.update();
+        mNetworkTraffic.updateSettings();
     }
 
     private void setControllerUsers() {
@@ -4637,8 +4681,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         if (mShowNavBar) {
             if (mNavigationBarView == null) {
-                mNavigationBarView =
-                    (NavigationBarView) View.inflate(mContext, R.layout.navigation_bar, null);
+                if (mEnableTabletNavigation) {
+                    mNavigationBarView =
+                        (NavigationBarView) View.inflate(mContext, R.layout.navigation_bar_tablet, null);
+                } else {
+                    mNavigationBarView =
+                        (NavigationBarView) View.inflate(mContext, R.layout.navigation_bar, null);
+                }
 
                 mNavigationBarView.setDisabledFlags(mDisabled);
                 mNavigationBarView.setBar(this);
